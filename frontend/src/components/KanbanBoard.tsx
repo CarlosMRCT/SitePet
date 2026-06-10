@@ -113,11 +113,11 @@ function KanbanColumn({
               key={agendamento.id}
               agendamento={agendamento}
               onProximo={() => {
-                const proximoStatus = {
+                const proximoStatus = ({
                   AGUARDANDO: 'EM_SERVICO',
                   EM_SERVICO: 'CONCLUIDO_ESPERANDO',
                   CONCLUIDO_ESPERANDO: 'CONCLUIDO_ENTREGUE',
-                }[agendamento.status];
+                } as Record<string, string>)[agendamento.status];
 
                 if (proximoStatus) {
                   onMudarStatus(agendamento.id, proximoStatus);
