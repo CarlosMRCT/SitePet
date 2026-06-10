@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { StatusAgendamento } from '../shared/types';
+import { StatusAgendamento } from '../../shared/types';
 
 const prisma = new PrismaClient();
 

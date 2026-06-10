@@ -9,26 +9,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ===== ENUMS =====
-enum TamanhoEnum {
-  PEQUENO
-  MEDIO
-  GRANDE
-}
-
-enum StatusAgendamentoEnum {
-  AGUARDANDO
-  EM_SERVICO
-  CONCLUIDO_ESPERANDO
-  CONCLUIDO_ENTREGUE
-}
-
 // ===== MODELS =====
 
 model Filial {
   id        Int       @id @default(autoincrement())
-  nome      String    @db.Text
-  endereco  String?   @db.Text
+  nome      String
+  endereco  String?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
@@ -43,9 +29,9 @@ model Filial {
 
 model Tutor {
   id       Int     @id @default(autoincrement())
-  nome     String  @db.Text
-  telefone String? @db.Text
-  email    String? @db.Text
+  nome     String
+  telefone String?
+  email    String?
   filialId Int
   filial   Filial  @relation(fields: [filialId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
@@ -59,9 +45,9 @@ model Tutor {
 
 model Pet {
   id       Int         @id @default(autoincrement())
-  nome     String      @db.Text
-  raca     String?     @db.Text
-  tamanho  TamanhoEnum @default(MEDIO)
+  nome     String
+  raca     String?
+  tamanho  String      @default("MEDIO")
   tutorId  Int
   tutor    Tutor       @relation(fields: [tutorId], references: [id], onDelete: Cascade)
   filialId Int
@@ -77,7 +63,7 @@ model Pet {
 
 model Servico {
   id             Int     @id @default(autoincrement())
-  nome           String  @db.Text
+  nome           String
   preco          Float
   duracaoMinutos Int
   filialId       Int
@@ -99,7 +85,7 @@ model Agendamento {
   filial             Filial                   @relation(fields: [filialId], references: [id], onDelete: Cascade)
   dataAgendamento    DateTime
   horaAgendamento    String
-  status             StatusAgendamentoEnum    @default(AGUARDANDO)
+  status             String                   @default("AGUARDANDO")
   observacoes        String?
   createdAt          DateTime                 @default(now())
   updatedAt          DateTime                 @updatedAt

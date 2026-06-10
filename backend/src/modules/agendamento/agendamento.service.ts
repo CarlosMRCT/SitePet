@@ -7,7 +7,7 @@ export class AgendamentoService {
   async listarFilial(filialId: number, data?: string): Promise<IAgendamentoDTO[]> {
     const agendamentos = await repository.listarPorFilial(filialId, data);
 
-    return agendamentos.map((ag) => ({
+    return agendamentos.map((ag: any) => ({
       id: ag.id,
       petId: ag.petId,
       petNome: ag.pet.nome,
@@ -16,7 +16,7 @@ export class AgendamentoService {
       dataAgendamento: ag.dataAgendamento.toISOString().split('T')[0],
       horaAgendamento: ag.horaAgendamento,
       status: ag.status as StatusAgendamento,
-      servicos: ag.servicos.map((s) => ({
+      servicos: ag.servicos.map((s: any) => ({
         id: s.servico.id,
         nome: s.servico.nome,
       })),
@@ -49,7 +49,7 @@ export class AgendamentoService {
       tutorNome: created.pet.tutor.nome,
       status: created.status,
       horaAgendamento: created.horaAgendamento,
-      servicos: created.servicos.map((s) => ({
+      servicos: created.servicos.map((s: any) => ({
         id: s.servico.id,
         nome: s.servico.nome,
       })),
@@ -89,7 +89,7 @@ export class AgendamentoService {
 
   async listarPets(filialId: number) {
     const pets = await repository.listarPets(filialId);
-    return pets.map((pet) => ({
+    return pets.map((pet: any) => ({
       id: pet.id,
       nome: pet.nome,
       raca: pet.raca,
