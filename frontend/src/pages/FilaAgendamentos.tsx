@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { KanbanBoard } from '../components/KanbanBoard';
+import { NovoAgendamentoModal } from '../components/NovoAgendamentoModal';
 import { useAgendamentos } from '../hooks/useAgendamentos';
-import { RefreshCw } from 'lucide-react';
+import { Plus, RefreshCw } from 'lucide-react';
 
 export function FilaAgendamentos() {
   const [filialSelecionada, setFilialSelecionada] = useState(1);
-  const { agendamentos, loading, error, mudarStatus, recarregar } =
+  const [modalAberto, setModalAberto] = useState(false);
+  const { agendamentos, loading, error, mudarStatus, recarregar, criar } =
     useAgendamentos(filialSelecionada);
 
   const nomeFilial = filialSelecionada === 1 ? 'Matriz' : 'Centro';
@@ -47,6 +49,15 @@ export function FilaAgendamentos() {
                   <option value={2}>🏪 Centro</option>
                 </select>
               </div>
+
+              <button
+                onClick={() => setModalAberto(true)}
+                className="bg-senti-orange hover:bg-opacity-90 text-white px-4 py-2 rounded-lg font-semibold transition flex items-center gap-2"
+                title="Novo agendamento"
+              >
+                <Plus size={18} />
+                Novo Agendamento
+              </button>
 
               <button
                 onClick={recarregar}
@@ -141,6 +152,14 @@ export function FilaAgendamentos() {
           {/* Kanban Board */}
           <KanbanBoard agendamentos={agendamentos} onMudarStatus={mudarStatus} />
         </>
+      )}
+
+      {modalAberto && (
+        <NovoAgendamentoModal
+          filialId={filialSelecionada}
+          onClose={() => setModalAberto(false)}
+          onCriar={criar}
+        />
       )}
 
       {/* Footer */}

@@ -38,6 +38,18 @@ export function useAgendamentos(filialId: number) {
     carregar();
   }, [carregar]);
 
+  const criar = async (data: {
+    petId: number;
+    filialId: number;
+    dataAgendamento: string;
+    horaAgendamento: string;
+    servicosIds: number[];
+    observacoes?: string;
+  }) => {
+    await agendamentoAPI.criar(data);
+    await carregar();
+  };
+
   useEffect(() => {
     carregar();
 
@@ -47,5 +59,5 @@ export function useAgendamentos(filialId: number) {
     return () => clearInterval(interval);
   }, [carregar, recarregar]);
 
-  return { agendamentos, loading, error, carregar, mudarStatus, recarregar };
+  return { agendamentos, loading, error, carregar, mudarStatus, recarregar, criar };
 }
