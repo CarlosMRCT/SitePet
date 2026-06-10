@@ -1,0 +1,135 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ===== ENUMS =====
+enum TamanhoEnum {
+  PEQUENO
+  MEDIO
+  GRANDE
+}
+
+enum StatusAgendamentoEnum {
+  AGUARDANDO
+  EM_SERVICO
+  CONCLUIDO_ESPERANDO
+  CONCLUIDO_ENTREGUE
+}
+
+// ===== MODELS =====
+
+model Filial {
+  id        Int       @id @default(autoincrement())
+  nome      String    @db.Text
+  endereco  String?   @db.Text
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  // Relações
+  tutores       Tutor[]
+  pets          Pet[]
+  agendamentos  Agendamento[]
+  servicos      Servico[]
+
+  @@map("filial")
+}
+
+model Tutor {
+  id       Int     @id @default(autoincrement())
+  nome     String  @db.Text
+  telefone String? @db.Text
+  email    String? @db.Text
+  filialId Int
+  filial   Filial  @relation(fields: [filialId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relações
+  pets Pet[]
+
+  @@map("tutor")
+}
+
+model Pet {
+  id       Int         @id @default(autoincrement())
+  nome     String      @db.Text
+  raca     String?     @db.Text
+  tamanho  TamanhoEnum @default(MEDIO)
+  tutorId  Int
+  tutor    Tutor       @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+  filialId Int
+  filial   Filial      @relation(fields: [filialId], references: [id], onDelete: Cascade)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  // Relações
+  agendamentos Agendamento[]
+
+  @@map("pet")
+}
+
+model Servico {
+  id             Int     @id @default(autoincrement())
+  nome           String  @db.Text
+  preco          Float
+  duracaoMinutos Int
+  filialId       Int
+  filial         Filial  @relation(fields: [filialId], references: [id], onDelete: Cascade)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Relações
+  agendamentos AgendamentoServico[]
+
+  @@map("servico")
+}
+
+model Agendamento {
+  id                 Int                      @id @default(autoincrement())
+  petId              Int
+  pet                Pet                      @relation(fields: [petId], references: [id], onDelete: Cascade)
+  filialId           Int
+  filial             Filial                   @relation(fields: [filialId], references: [id], onDelete: Cascade)
+  dataAgendamento    DateTime
+  horaAgendamento    String
+  status             StatusAgendamentoEnum    @default(AGUARDANDO)
+  observacoes        String?
+  createdAt          DateTime                 @default(now())
+  updatedAt          DateTime                 @updatedAt
+
+  // Relações
+  servicos  AgendamentoServico[]
+  historico AgendamentoStatusHistorico[]
+
+  @@map("agendamento")
+}
+
+model AgendamentoServico {
+  id             Int         @id @default(autoincrement())
+  agendamentoId  Int
+  agendamento    Agendamento @relation(fields: [agendamentoId], references: [id], onDelete: Cascade)
+  servicoId      Int
+  servico        Servico     @relation(fields: [servicoId], references: [id], onDelete: Cascade)
+  createdAt      DateTime    @default(now())
+
+  @@map("agendamento_servico")
+}
+
+model AgendamentoStatusHistorico {
+  id               Int         @id @default(autoincrement())
+  agendamentoId    Int
+  agendamento      Agendamento @relation(fields: [agendamentoId], references: [id], onDelete: Cascade)
+  statusAnterior   String?
+  statusNovo       String
+  mudadoEm         DateTime    @default(now())
+  mudadoPor        String?
+
+  @@map("agendamento_status_historico")
+}
